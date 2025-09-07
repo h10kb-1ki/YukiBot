@@ -55,7 +55,7 @@ def handle_message(event):
     )
 
 def cmd():
-    txt = '電車 バス 天気 勤務（週、月、休） 宇宙兄弟'
+    return '電車 バス 天気 勤務（週、月、休） 宇宙兄弟'
 
 def train():    
     url = 'https://transit.yahoo.co.jp/traininfo/detail/192/193/'
@@ -66,7 +66,7 @@ def train():
         jr_status = statusJ.text
     else:
         jr_status = '遅延あり'
-        jr = f'■東海道本線[豊橋～米原]：{jr_status}（https://traininfo.jr-central.co.jp/zairaisen/status_detail.html?line=10001&lang=ja）\n'
+    jr = f'■東海道本線[豊橋～米原]：{jr_status}（https://traininfo.jr-central.co.jp/zairaisen/status_detail.html?line=10001&lang=ja）\n'
 
     url = 'https://transit.yahoo.co.jp/traininfo/detail/208/0/'
     res = requests.get(url)
@@ -103,6 +103,7 @@ def shift_data():
     for i in range(0, len(refs)):
         ref = refs[i].get('href')
         ref_list.append(ref)
+    return title_list, ref_list
 
 def weekly():
     title_list, ref_list = shift_data()
