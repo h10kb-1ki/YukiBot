@@ -47,8 +47,6 @@ def handle_message(event):
     else:
         reply_text = out_of_cmd()
 
-    #reply_text = db_search(user_message)
-
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_text)
@@ -66,7 +64,7 @@ def train():
         jr_status = statusJ.text
     else:
         jr_status = '遅延あり'
-    jr = f'■東海道本線[豊橋～米原]：{jr_status}（https://traininfo.jr-central.co.jp/zairaisen/status_detail.html?line=10001&lang=ja）\n'
+    jr = f'■東海道本線[豊橋～米原]\n{jr_status}\n https://traininfo.jr-central.co.jp/zairaisen/status_detail.html?line=10001&lang=ja \n\n'
 
     url = 'https://transit.yahoo.co.jp/traininfo/detail/208/0/'
     res = requests.get(url)
@@ -76,12 +74,12 @@ def train():
         meitetsu_status = statusM.text
     else:
         meitetsu_status = '遅延あり'
-    meitetsu = f'■名鉄名古屋本線：{meitetsu_status}（https://top.meitetsu.co.jp/em/）\n\n'
-    return jr + meitetsu + '▶乗り換え案内 https://www.jorudan.co.jp/norikae/'
+    meitetsu = f'■名鉄名古屋本線\n{meitetsu_status}\n https://top.meitetsu.co.jp/em/ \n\n'
+    return jr + meitetsu + '▶乗り換え案内\n https://www.jorudan.co.jp/norikae/'
 
 def bus():
-    m_bus = '▶名鉄バス（安城駅発 更生病院行）\nhttps://navi.meitetsu-bus.co.jp/mb/DepQR.aspx?p=320103000 \n'
-    a_left = '▶あんくるバス（左まわり）\nhttps://ankuru-bus.com/rosen_junkan_l.php \n'
+    m_bus = '▶名鉄バス（安城駅発 更生病院行）\nhttps://navi.meitetsu-bus.co.jp/mb/DepQR.aspx?p=320103000 \n\n'
+    a_left = '▶あんくるバス（左まわり）\nhttps://ankuru-bus.com/rosen_junkan_l.php \n\n'
     a_right = '▶あんくるバス（右まわり）\nhttps://ankuru-bus.com/rosen_junkan_r.php'
     return m_bus + a_left + a_right
 
@@ -127,7 +125,8 @@ def yasumi():
     txt = ''
     for i in range(0, len(title_list)):
         if '休' in title_list[i]:
-            txt += f'■{title_list[i]}\n{ref_list[i]}\n'
+            if not '未取得' in title_list[i]:
+                txt += f'■{title_list[i]}\n{ref_list[i]}\n'
     return txt
 
 def select_message():
