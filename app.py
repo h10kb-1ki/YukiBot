@@ -6,6 +6,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import random
+import re
 
 # 環境変数（Render）
 CHANNEL_SECRET = os.environ.get("LINE_CHANNEL_SECRET")
@@ -32,6 +33,8 @@ def handle_message(event):
         reply_text = cmd()
     elif user_message in ['電車', 'jr', '名鉄']:
         reply_text = train()
+    elif user_message in ['時刻', '時刻表']:
+        reply_text = time_table()
     elif user_message in ['バス', 'あんくる']:
         reply_text = bus()
     elif user_message in ['天気', '雨雲', '雲']:
@@ -44,6 +47,10 @@ def handle_message(event):
         reply_text = yasumi()
     elif user_message in ['宇宙', '宇宙兄弟', '名言']:
         reply_text = select_message()
+    elif user_message in ['yahoo', 'ヤフー', 'やふー']:
+        reply_text = yahoo()
+    elif user_message in ['薬', '製薬']:
+        reply_text = drug_news()
     else:
         reply_text = out_of_cmd()
 
@@ -53,7 +60,7 @@ def handle_message(event):
     )
 
 def cmd():
-    return '電車 バス 天気 勤務（週、月、休） 宇宙兄弟'
+    return '電車 時刻表 バス 天気 勤務（週、月、休） 宇宙兄弟 yahoo! 製薬業界ニュース'
 
 def train():    
     url = 'https://transit.yahoo.co.jp/traininfo/detail/192/193/'
@@ -178,6 +185,40 @@ def out_of_cmd():
     ]
     i = random.randint(0, len(message)-1)
     return message[i]
+
+def time_table():
+    out = '▶安城（帰り）\nhttps://railway.jr-central.co.jp/time-schedule/srch/_pdf/data/202503/tokaido_Anjo_A_w_d.pdf'
+    in1 = '▶尾頭橋（行き）\nhttps://railway.jr-central.co.jp/time-schedule/srch/_pdf/data/202503/tokaido_Otobashi_B_wh_u.pdf'
+    in2 = '▶金山（行き）\nhttps://railway.jr-central.co.jp/time-schedule/srch/_pdf/data/202503/tokaido_Kanayama_A_w_u.pdf'
+    return out + '\n\n' + in1 + '\n\n' + in2
+
+def yahoo():
+    url = 'https://www.yahoo.co.jp/'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    elems = soup.find_all(href = re.compile('news.yahoo.co.jp/pickup'))
+    txt = ''
+    for i in range(0, len(elems)):
+        title = elems[i].text
+        link = elems[i].attrs['href']
+        txt += '◼︎' + title + '\n' + link + '\n\n'
+    return txt
+    
+def drug_news():
+    url = 'https://answers.ten-navi.com/pharmanews/pharma_category/1/'
+    res = requests.get(url)
+    res.encoding = res.apparent_encoding
+    soup = BeautifulSoup(res.text, "html.parser")
+    titles = soup.find_all('h2')
+    tag = soup.find_all(class_='tag')
+    ref = soup.find_all('a', class_='clearfix')
+    txt = ''
+    for i in range(0, len(titles)):
+        if tag[i].text == 'ニュース解説':
+            title = titles[i].text
+            link = ref[i].attrs['href']
+            txt += '◼︎' + title + '\n' + link + '\n\n'
+    return txt
 
 @app.route("/", methods=["GET"])
 def index():
