@@ -47,7 +47,7 @@ def handle_message(event):
         reply_text = yasumi()
     elif user_message in ['宇宙', '宇宙兄弟', '名言']:
         reply_text = select_message()
-    elif user_message in ['yahoo', 'ヤフー', 'やふー']:
+    elif user_message in ['yahoo', 'ヤフー', 'Yahoo', 'やふー']:
         reply_text = yahoo()
     elif user_message in ['薬', '製薬']:
         reply_text = drug_news()
@@ -60,7 +60,7 @@ def handle_message(event):
     )
 
 def cmd():
-    return '電車 時刻表 バス 天気 勤務（週、月、休） 宇宙兄弟 yahoo! 製薬業界ニュース'
+    return '電車 時刻表 バス 天気 勤務（週、月、休） 宇宙兄弟 Yahoo! 製薬業界ニュース'
 
 def train():    
     url = 'https://transit.yahoo.co.jp/traininfo/detail/192/193/'
